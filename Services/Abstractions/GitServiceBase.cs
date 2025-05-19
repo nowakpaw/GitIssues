@@ -51,7 +51,7 @@ public abstract class GitServiceBase : IGitService
         return null;
     }
 
-    protected virtual void SetDefaultHeaders(HttpRequestMessage httpRequest) { }
+    protected abstract void SetDefaultHeaders(HttpRequestMessage httpRequest);
 
     protected static string ExtractIssueUrl(string responseContent, string propertyName)
     {

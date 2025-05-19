@@ -1,3 +1,5 @@
+using Polly;
+using Polly.Retry;
 using System.Text;
 using System.Text.Json;
 
@@ -5,6 +7,12 @@ namespace Services.Helpers;
 
 public static class GitServiceHelper
 {
+    private static readonly AsyncRetryPolicy<HttpResponseMessage> RetryPolicy =
+        Policy<HttpResponseMessage>
+            .Handle<HttpRequestException>()
+            .OrResult(r => (int)r.StatusCode >= 500)
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+
     public static async Task<string?> SendRequestAsync(
         HttpClient httpClient,
         Uri uri,
@@ -20,7 +28,10 @@ public static class GitServiceHelper
         };
         setHeaders(httpRequest);
 
-        using var response = await httpClient.SendAsync(httpRequest, cancellationToken);
+        using var response = await RetryPolicy.ExecuteAsync(
+            async ct => await httpClient.SendAsync(httpRequest, ct),
+            cancellationToken);
+
         response.EnsureSuccessStatusCode();
 
         if (extractUrl is not null)

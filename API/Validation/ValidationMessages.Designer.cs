@@ -68,5 +68,14 @@ namespace API.Validation {
                 return ResourceManager.GetString("IsRequired", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is not supported..
+        /// </summary>
+        internal static string NotSupported {
+            get {
+                return ResourceManager.GetString("NotSupported", resourceCulture);
+            }
+        }
     }
 }

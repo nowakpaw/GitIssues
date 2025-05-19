@@ -19,7 +19,7 @@ public sealed class GitHubClient : IGitClient
 
     public GitHubClient(IHttpClientFactory httpClientFactory, IOptions<GitServicesOptions> options)
     {
-        var serviceName = GitClientTypes.GitHub.ToString();
+        var serviceName = ClientType.ToString();
         _httpClient = httpClientFactory.CreateClient(serviceName);
         _options = options.Value.Services.First(s => s.Name == serviceName);
     }

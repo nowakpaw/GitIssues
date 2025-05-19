@@ -11,7 +11,7 @@ public sealed class CreateIssueEndpoint(IGitClientFactory gitServiceFactory) : E
 {
     public override async Task HandleAsync(CreateIssueRequest request, CancellationToken cancellationToken)
     {
-        var gitService = gitServiceFactory.GetService(request.GitServiceType);
+        var gitService = gitServiceFactory.GetService(request.Client);
         var responseUri = await gitService.CreateIssueAsync(request, cancellationToken);
         var response = new CreateOrUpdateIssueResponse(responseUri);
 

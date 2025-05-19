@@ -15,11 +15,11 @@ public sealed class GitHubClient : IGitClient
     private const string IssueHtmlUrlResponseProperty = "html_url";
     private const string IssueCloseState = "closed";
 
-    public GitClientTypes ClientType => GitClientTypes.GitHub;
+    public GitClients Client => GitClients.GitHub;
 
     public GitHubClient(IHttpClientFactory httpClientFactory, IOptions<GitServicesOptions> options)
     {
-        var serviceName = ClientType.ToString();
+        var serviceName = Client.ToString();
         _httpClient = httpClientFactory.CreateClient(serviceName);
         _options = options.Value.Services.First(s => s.Name == serviceName);
     }

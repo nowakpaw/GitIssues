@@ -14,11 +14,11 @@ public sealed class GitLabClient : IGitClient
     private const string IssueHtmlUrlResponseProperty = "web_url";
     private const string IssueCloseState = "close";
 
-    public GitClientTypes ClientType => GitClientTypes.GitLab;
+    public GitClients Client => GitClients.GitLab;
 
     public GitLabClient(IHttpClientFactory httpClientFactory, IOptions<GitServicesOptions> options)
     {
-        var serviceName = ClientType.ToString();
+        var serviceName = Client.ToString();
         _httpClient = httpClientFactory.CreateClient(serviceName);
         _options = options.Value.Services.First(s => s.Name == serviceName);
     }

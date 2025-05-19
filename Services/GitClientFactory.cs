@@ -5,15 +5,14 @@ namespace Services;
 
 public class GitClientFactory(IEnumerable<IGitClient> clients) : IGitClientFactory
 {
-    private readonly Dictionary<GitClientTypes, IGitClient> _clients = clients.ToDictionary(c => c.ClientType);
-
-    public IGitClient GetService(GitClientTypes type)
+    public IGitClient GetService(GitClients client)
     {
-        if (_clients.TryGetValue(type, out var client))
+        var result = clients.FirstOrDefault(c => c.Client == client);
+        if (result is not null)
         {
-            return client;
+            return result;
         }
 
-        throw new NotSupportedException($"Client type {type} is not supported.");
+        throw new NotSupportedException($"Client {client} is not supported.");
     }
 }

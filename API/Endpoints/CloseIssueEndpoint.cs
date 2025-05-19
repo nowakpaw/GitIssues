@@ -10,7 +10,7 @@ public sealed class CloseIssueEndpoint(IGitClientFactory gitServiceFactory) : En
 {
     public override async Task HandleAsync(CloseIssueRequest request, CancellationToken cancellationToken)
     {
-        var gitService = gitServiceFactory.GetService(request.GitServiceType);
+        var gitService = gitServiceFactory.GetService(request.Client);
         await gitService.CloseIssueAsync(request, cancellationToken);
 
         await SendOkAsync(cancellationToken);

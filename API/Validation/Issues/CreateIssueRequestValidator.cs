@@ -10,14 +10,22 @@ public sealed class CreateIssueRequestValidator : Validator<CreateIssueRequest>
     {
         RuleFor(r => r.Title)
             .NotEmpty()
-            .WithMessage("Title is requied"); //todo 2025/05/19 in real world - move it to resx or something like that
+            .WithMessage(string.Format(ValidationMessages.IsRequired, nameof(CreateIssueRequest.Title)));
 
         RuleFor(r => r.Description)
             .NotEmpty()
-            .WithMessage("Description is requied"); //todo 2025/05/19 in real world - move it to resx or something like that
+            .WithMessage(string.Format(ValidationMessages.IsRequired, nameof(CreateIssueRequest.Description)));
 
-        RuleFor(r => r.GitServiceType)
+        RuleFor(r => r.Client)
             .IsInEnum()
-            .WithMessage("GitServiceType is not valid"); //todo 2025/05/19 in real world - move it to resx or something like that
+            .WithMessage(string.Format(ValidationMessages.IsRequired, nameof(CreateIssueRequest.Client)));
+
+        RuleFor(r => r.RepositoryOwner)
+            .NotEmpty()
+            .WithMessage(string.Format(ValidationMessages.IsRequired, nameof(CreateIssueRequest.RepositoryOwner)));
+
+        RuleFor(r => r.RepositoryName)
+            .NotEmpty()
+            .WithMessage(string.Format(ValidationMessages.IsRequired, nameof(CreateIssueRequest.RepositoryName)));
     }
 }

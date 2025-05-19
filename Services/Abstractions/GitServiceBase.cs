@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using Shared.Contracts.Requests.Issues;
 using Shared.Enums;
 using Shared.Options;
 
@@ -19,7 +20,7 @@ public abstract class GitServiceBase : IGitService
         Options = options.Value.Services.First(s => s.Name == serviceName);
     }
 
-    public abstract Task<string> CreateIssueAsync(string title, string description, CancellationToken cancellationToken);
-    public abstract Task UpdateIssueAsync(int issueId, string title, string description, CancellationToken cancellationToken);
-    public abstract Task CloseIssueAsync(int issueId, CancellationToken cancellationToken);
+    public abstract Task<string> CreateIssueAsync(CreateIssueRequest request, CancellationToken cancellationToken);
+    public abstract Task<string> UpdateIssueAsync(UpdateIssueRequest request, CancellationToken cancellationToken);
+    public abstract Task CloseIssueAsync(CloseIssueRequest request, CancellationToken cancellationToken);
 }

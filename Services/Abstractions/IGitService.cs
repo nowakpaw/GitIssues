@@ -1,8 +1,10 @@
+using Shared.Contracts.Requests.Issues;
+
 namespace Services.Abstractions;
 
 public interface IGitService
 {
-    Task<string> CreateIssueAsync(string title, string description, CancellationToken cancellationToken);
-    Task UpdateIssueAsync(int issueId, string title, string description, CancellationToken cancellationToken);
-    Task CloseIssueAsync(int issueId, CancellationToken cancellationToken);
+    Task<string> CreateIssueAsync(CreateIssueRequest request, CancellationToken cancellationToken);
+    Task<string> UpdateIssueAsync(UpdateIssueRequest request, CancellationToken cancellationToken);
+    Task CloseIssueAsync(CloseIssueRequest request, CancellationToken cancellationToken);
 }

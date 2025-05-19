@@ -6,15 +6,15 @@ using Shared.Contracts.Responses.Issues;
 
 namespace API.Endpoints;
 
-[HttpPost("issues/create"), AllowAnonymous]
-public sealed class CreateIssueEndpoint(GitServiceFactory gitServiceFactory) : Endpoint<CreateIssueRequest, CreateOrUpdateIssueResponse>
+[HttpPut("issues/update"), AllowAnonymous]
+public sealed class UpdateIssueEndpoint(GitServiceFactory gitServiceFactory) : Endpoint<UpdateIssueRequest, CreateOrUpdateIssueResponse>
 {
     private readonly GitServiceFactory _gitServiceFactory = gitServiceFactory;
 
-    public override async Task HandleAsync(CreateIssueRequest request, CancellationToken cancellationToken)
+    public override async Task HandleAsync(UpdateIssueRequest request, CancellationToken cancellationToken)
     {
         var gitService = _gitServiceFactory.GetService(request.GitServiceType);
-        var responseUri = await gitService.CreateIssueAsync(request, cancellationToken);
+        var responseUri = await gitService.UpdateIssueAsync(request, cancellationToken);
         var response = new CreateOrUpdateIssueResponse(responseUri);
 
         await SendOkAsync(response, cancellationToken);

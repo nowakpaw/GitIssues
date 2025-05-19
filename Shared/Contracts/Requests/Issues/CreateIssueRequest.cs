@@ -1,10 +1,7 @@
-﻿using Shared.Enums;
+﻿namespace Shared.Contracts.Requests.Issues;
 
-namespace Shared.Contracts.Requests.Issues;
-
-public sealed class CreateIssueRequest
+public class CreateIssueRequest : BaseIssueRequest
 {
-    public string Title { get; set; } = null!;
-    public string Description { get; set; } = null!;
-    public GitServiceTypes GitServiceType { get; set; }
+    public string Title { get; init; } = null!;
+    public string Description { get; init; } = null!;
 }

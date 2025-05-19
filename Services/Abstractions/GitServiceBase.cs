@@ -51,8 +51,6 @@ public abstract class GitServiceBase : IGitService
         return null;
     }
 
-    protected abstract void SetDefaultHeaders(HttpRequestMessage httpRequest);
-
     protected static string ExtractIssueUrl(string responseContent, string propertyName)
     {
         using var doc = JsonDocument.Parse(responseContent);
@@ -60,4 +58,6 @@ public abstract class GitServiceBase : IGitService
             ? urlElement.GetString() ?? string.Empty
             : string.Empty;
     }
+
+    protected abstract void SetDefaultHeaders(HttpRequestMessage httpRequest);
 }

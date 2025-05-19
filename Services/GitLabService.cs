@@ -6,7 +6,7 @@ using Shared.Options;
 
 namespace Services;
 
-public class GitLabService(
+public sealed class GitLabService(
     IHttpClientFactory httpClientFactory,
     IOptions<GitServicesOptions> options
 ) : GitServiceBase(httpClientFactory, options, GitServiceTypes.GitLab)

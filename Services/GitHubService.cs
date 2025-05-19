@@ -7,7 +7,7 @@ using System.Net.Http.Headers;
 
 namespace Services;
 
-public class GitHubService(
+public sealed class GitHubService(
     IHttpClientFactory httpClientFactory,
     IOptions<GitServicesOptions> options
 ) : GitServiceBase(httpClientFactory, options, GitServiceTypes.GitHub)

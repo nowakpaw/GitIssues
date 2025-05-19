@@ -6,6 +6,7 @@ namespace Shared.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    //I would go with Refit but I'm not sure if I am allowed to use it in this project:)
     public static IServiceCollection AddGitHttpClients(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<GitServicesOptions>(configuration.GetSection(GitServicesOptions.ConfigKey));

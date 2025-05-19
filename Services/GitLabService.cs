@@ -1,43 +1,55 @@
 using Microsoft.Extensions.Options;
 using Services.Abstractions;
+using Services.Helpers;
 using Shared.Contracts.Requests.Issues;
 using Shared.Enums;
 using Shared.Options;
 
 namespace Services;
 
-public sealed class GitLabService(
-    IHttpClientFactory httpClientFactory,
-    IOptions<GitServicesOptions> options
-) : GitServiceBase(httpClientFactory, options, GitServiceTypes.GitLab)
+public sealed class GitLabService : IGitService
 {
-    private const string ProjectIssuePath = "/projects/{0}/issues/{1}";
+    private readonly HttpClient _httpClient;
+    private readonly GitServiceOptions _options;
     private const string IssueHtmlUrlResponseProperty = "web_url";
     private const string IssueCloseState = "close";
 
-    public override Task<string> CreateIssueAsync(CreateIssueRequest request, CancellationToken cancellationToken)
-        => SendRequestAsync(
+    public GitLabService(IHttpClientFactory httpClientFactory, IOptions<GitServicesOptions> options)
+    {
+        var serviceName = GitServiceTypes.GitLab.ToString();
+        _httpClient = httpClientFactory.CreateClient(serviceName);
+        _options = options.Value.Services.First(s => s.Name == serviceName);
+    }
+
+    public Task<string> CreateIssueAsync(CreateIssueRequest request, CancellationToken cancellationToken)
+        => GitServiceHelper.SendRequestAsync(
+            _httpClient,
             BuildIssueUri(request.RepositoryOwner, request.RepositoryName, null),
             HttpMethod.Post,
             new { title = request.Title, description = request.Description },
-            content => ExtractIssueUrl(content, IssueHtmlUrlResponseProperty),
+            SetDefaultHeaders,
+            content => GitServiceHelper.ExtractIssueUrl(content, IssueHtmlUrlResponseProperty),
             cancellationToken
         )!;
 
-    public override Task<string> UpdateIssueAsync(UpdateIssueRequest request, CancellationToken cancellationToken)
-        => SendRequestAsync(
+    public Task<string> UpdateIssueAsync(UpdateIssueRequest request, CancellationToken cancellationToken)
+        => GitServiceHelper.SendRequestAsync(
+            _httpClient,
             BuildIssueUri(request.RepositoryOwner, request.RepositoryName, request.Id),
             HttpMethod.Put,
             new { title = request.Title, description = request.Description },
-            content => ExtractIssueUrl(content, IssueHtmlUrlResponseProperty),
+            SetDefaultHeaders,
+            content => GitServiceHelper.ExtractIssueUrl(content, IssueHtmlUrlResponseProperty),
             cancellationToken
         )!;
 
-    public override Task CloseIssueAsync(CloseIssueRequest request, CancellationToken cancellationToken)
-        => SendRequestAsync(
+    public Task CloseIssueAsync(CloseIssueRequest request, CancellationToken cancellationToken)
+        => GitServiceHelper.SendRequestAsync(
+            _httpClient,
             BuildIssueUri(request.RepositoryOwner, request.RepositoryName, request.Id),
             HttpMethod.Put,
             new { state_event = IssueCloseState },
+            SetDefaultHeaders,
             null,
             cancellationToken
         );
@@ -46,13 +58,13 @@ public sealed class GitLabService(
     {
         var projectId = Uri.EscapeDataString($"{owner}/{repo}");
         var idPart = issueIid.HasValue ? issueIid.Value.ToString() : string.Empty;
-        var path = string.Format(ProjectIssuePath, projectId, idPart).TrimEnd('/');
-        return new Uri($"{Options.BaseUrl.TrimEnd('/')}{path}");
+        var path = $"/projects/{projectId}/issues/{idPart}".TrimEnd('/');
+        return new Uri($"{_options.BaseUrl.TrimEnd('/')}{path}");
     }
 
-    protected override void SetDefaultHeaders(HttpRequestMessage httpRequest)
+    private void SetDefaultHeaders(HttpRequestMessage httpRequest)
     {
-        httpRequest.Headers.Add("PRIVATE-TOKEN", Options.Token);
+        httpRequest.Headers.Add("PRIVATE-TOKEN", _options.Token);
         httpRequest.Headers.Accept.ParseAdd("application/json");
     }
 }

@@ -7,9 +7,9 @@ using Shared.Contracts.Responses.Issues;
 namespace API.Endpoints;
 
 [HttpPost("issues/create"), AllowAnonymous]
-public sealed class CreateIssueEndpoint(GitServiceFactory gitServiceFactory) : Endpoint<CreateIssueRequest, CreateOrUpdateIssueResponse>
+public sealed class CreateIssueEndpoint(GitClientFactory gitServiceFactory) : Endpoint<CreateIssueRequest, CreateOrUpdateIssueResponse>
 {
-    private readonly GitServiceFactory _gitServiceFactory = gitServiceFactory;
+    private readonly GitClientFactory _gitServiceFactory = gitServiceFactory;
 
     public override async Task HandleAsync(CreateIssueRequest request, CancellationToken cancellationToken)
     {

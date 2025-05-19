@@ -6,7 +6,7 @@ namespace Shared.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddGitClients(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddGitHttpClients(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<GitServicesOptions>(configuration.GetSection(GitServicesOptions.ConfigKey));
 
@@ -18,7 +18,6 @@ public static class ServiceCollectionExtensions
             services.AddHttpClient(service.Name, client =>
             {
                 client.BaseAddress = new Uri(service.BaseUrl);
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {service.Token}");
             });
         }
 

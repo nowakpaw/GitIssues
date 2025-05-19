@@ -4,19 +4,22 @@ using Services.Helpers;
 using Shared.Contracts.Requests.Issues;
 using Shared.Enums;
 using Shared.Options;
+using System.Net.Http.Headers;
 
 namespace Services;
 
-public sealed class GitLabService : IGitService
+public sealed class GitHubClient : IGitClient
 {
     private readonly HttpClient _httpClient;
     private readonly GitServiceOptions _options;
-    private const string IssueHtmlUrlResponseProperty = "web_url";
-    private const string IssueCloseState = "close";
+    private const string IssueHtmlUrlResponseProperty = "html_url";
+    private const string IssueCloseState = "closed";
 
-    public GitLabService(IHttpClientFactory httpClientFactory, IOptions<GitServicesOptions> options)
+    public GitClientTypes ClientType => GitClientTypes.GitHub;
+
+    public GitHubClient(IHttpClientFactory httpClientFactory, IOptions<GitServicesOptions> options)
     {
-        var serviceName = GitServiceTypes.GitLab.ToString();
+        var serviceName = GitClientTypes.GitHub.ToString();
         _httpClient = httpClientFactory.CreateClient(serviceName);
         _options = options.Value.Services.First(s => s.Name == serviceName);
     }
@@ -26,7 +29,7 @@ public sealed class GitLabService : IGitService
             _httpClient,
             BuildIssueUri(request.RepositoryOwner, request.RepositoryName, null),
             HttpMethod.Post,
-            new { title = request.Title, description = request.Description },
+            new { title = request.Title, body = request.Description },
             SetDefaultHeaders,
             content => GitServiceHelper.ExtractIssueUrl(content, IssueHtmlUrlResponseProperty),
             cancellationToken
@@ -36,8 +39,8 @@ public sealed class GitLabService : IGitService
         => GitServiceHelper.SendRequestAsync(
             _httpClient,
             BuildIssueUri(request.RepositoryOwner, request.RepositoryName, request.Id),
-            HttpMethod.Put,
-            new { title = request.Title, description = request.Description },
+            HttpMethod.Patch,
+            new { title = request.Title, body = request.Description },
             SetDefaultHeaders,
             content => GitServiceHelper.ExtractIssueUrl(content, IssueHtmlUrlResponseProperty),
             cancellationToken
@@ -47,24 +50,24 @@ public sealed class GitLabService : IGitService
         => GitServiceHelper.SendRequestAsync(
             _httpClient,
             BuildIssueUri(request.RepositoryOwner, request.RepositoryName, request.Id),
-            HttpMethod.Put,
-            new { state_event = IssueCloseState },
+            HttpMethod.Patch,
+            new { state = IssueCloseState },
             SetDefaultHeaders,
             null,
             cancellationToken
         );
 
-    private Uri BuildIssueUri(string owner, string repo, int? issueIid)
+    private Uri BuildIssueUri(string owner, string repo, int? issueId)
     {
-        var projectId = Uri.EscapeDataString($"{owner}/{repo}");
-        var idPart = issueIid.HasValue ? issueIid.Value.ToString() : string.Empty;
-        var path = $"/projects/{projectId}/issues/{idPart}".TrimEnd('/');
+        var idPart = issueId.HasValue ? $"/{issueId.Value}" : string.Empty;
+        var path = $"/repos/{owner}/{repo}/issues{idPart}";
         return new Uri($"{_options.BaseUrl.TrimEnd('/')}{path}");
     }
 
     private void SetDefaultHeaders(HttpRequestMessage httpRequest)
     {
-        httpRequest.Headers.Add("PRIVATE-TOKEN", _options.Token);
-        httpRequest.Headers.Accept.ParseAdd("application/json");
+        httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.Token);
+        httpRequest.Headers.UserAgent.ParseAdd("GitIssues/2025");
+        httpRequest.Headers.Accept.ParseAdd("application/vnd.github+json");
     }
 }

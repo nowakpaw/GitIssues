@@ -1,6 +1,6 @@
 ﻿namespace Shared.Enums;
 
-public enum GitServiceTypes
+public enum GitClientTypes
 {
     GitHub = 1,
     GitLab = 2,

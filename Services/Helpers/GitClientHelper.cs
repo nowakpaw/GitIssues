@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Services.Helpers;
 
-public static class GitServiceHelper
+public static class GitClientHelper
 {
     private static readonly AsyncRetryPolicy<HttpResponseMessage> RetryPolicy =
         Policy<HttpResponseMessage>

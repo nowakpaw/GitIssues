@@ -7,12 +7,12 @@ using Shared.Contracts.Responses.Issues;
 namespace API.Endpoints;
 
 [HttpPut("issues/update"), AllowAnonymous]
-public sealed class UpdateIssueEndpoint(IGitClientFactory gitServiceFactory) : Endpoint<UpdateIssueRequest, CreateOrUpdateIssueResponse>
+public sealed class UpdateIssueEndpoint(IGitClientFactory gitClientFactory) : Endpoint<UpdateIssueRequest, CreateOrUpdateIssueResponse>
 {
     public override async Task HandleAsync(UpdateIssueRequest request, CancellationToken cancellationToken)
     {
-        var gitService = gitServiceFactory.GetService(request.Client);
-        var responseUri = await gitService.UpdateIssueAsync(request, cancellationToken);
+        var gitClient = gitClientFactory.GetGitClient(request.Client);
+        var responseUri = await gitClient.UpdateIssueAsync(request, cancellationToken);
         var response = new CreateOrUpdateIssueResponse(responseUri);
 
         await SendOkAsync(response, cancellationToken);

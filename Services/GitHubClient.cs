@@ -25,29 +25,29 @@ public sealed class GitHubClient : IGitClient
     }
 
     public Task<string> CreateIssueAsync(CreateIssueRequest request, CancellationToken cancellationToken)
-        => GitServiceHelper.SendRequestAsync(
+        => GitClientHelper.SendRequestAsync(
             _httpClient,
             BuildIssueUri(request.RepositoryOwner, request.RepositoryName, null),
             HttpMethod.Post,
             new { title = request.Title, body = request.Description },
             SetDefaultHeaders,
-            content => GitServiceHelper.ExtractIssueUrl(content, IssueHtmlUrlResponseProperty),
+            content => GitClientHelper.ExtractIssueUrl(content, IssueHtmlUrlResponseProperty),
             cancellationToken
         )!;
 
     public Task<string> UpdateIssueAsync(UpdateIssueRequest request, CancellationToken cancellationToken)
-        => GitServiceHelper.SendRequestAsync(
+        => GitClientHelper.SendRequestAsync(
             _httpClient,
             BuildIssueUri(request.RepositoryOwner, request.RepositoryName, request.Id),
             HttpMethod.Patch,
             new { title = request.Title, body = request.Description },
             SetDefaultHeaders,
-            content => GitServiceHelper.ExtractIssueUrl(content, IssueHtmlUrlResponseProperty),
+            content => GitClientHelper.ExtractIssueUrl(content, IssueHtmlUrlResponseProperty),
             cancellationToken
         )!;
 
     public Task CloseIssueAsync(CloseIssueRequest request, CancellationToken cancellationToken)
-        => GitServiceHelper.SendRequestAsync(
+        => GitClientHelper.SendRequestAsync(
             _httpClient,
             BuildIssueUri(request.RepositoryOwner, request.RepositoryName, request.Id),
             HttpMethod.Patch,

@@ -5,7 +5,7 @@ namespace Services;
 
 public class GitClientFactory(IEnumerable<IGitClient> clients) : IGitClientFactory
 {
-    public IGitClient GetService(GitClients client)
+    public IGitClient GetGitClient(GitClients client)
     {
         var result = clients.FirstOrDefault(c => c.Client == client);
         if (result is not null)

@@ -4,5 +4,5 @@ namespace Services.Abstractions;
 
 public interface IGitClientFactory
 {
-    IGitClient GetService(GitClients type);
+    IGitClient GetGitClient(GitClients type);
 }

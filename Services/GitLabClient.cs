@@ -10,17 +10,17 @@ namespace Services;
 public sealed class GitLabClient : IGitClient
 {
     private readonly HttpClient _httpClient;
-    private readonly GitServiceOptions _options;
+    private readonly GitClientOptions _options;
     private const string IssueHtmlUrlResponseProperty = "web_url";
     private const string IssueCloseState = "close";
 
     public GitClients Client => GitClients.GitLab;
 
-    public GitLabClient(IHttpClientFactory httpClientFactory, IOptions<GitServicesOptions> options)
+    public GitLabClient(IHttpClientFactory httpClientFactory, IOptions<List<GitClientOptions>> options)
     {
-        var serviceName = Client.ToString();
-        _httpClient = httpClientFactory.CreateClient(serviceName);
-        _options = options.Value.Services.First(s => s.Name == serviceName);
+        var clientName = Client.ToString();
+        _httpClient = httpClientFactory.CreateClient(clientName);
+        _options = options.Value.First(s => s.Name == clientName);
     }
 
     public Task<string> CreateIssueAsync(CreateIssueRequest request, CancellationToken cancellationToken)

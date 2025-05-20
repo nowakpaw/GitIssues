@@ -11,17 +11,17 @@ namespace Services;
 public sealed class GitHubClient : IGitClient
 {
     private readonly HttpClient _httpClient;
-    private readonly GitServiceOptions _options;
+    private readonly GitClientOptions _options;
     private const string IssueHtmlUrlResponseProperty = "html_url";
     private const string IssueCloseState = "closed";
 
     public GitClients Client => GitClients.GitHub;
 
-    public GitHubClient(IHttpClientFactory httpClientFactory, IOptions<GitServicesOptions> options)
+    public GitHubClient(IHttpClientFactory httpClientFactory, IOptions<List<GitClientOptions>> options)
     {
-        var serviceName = Client.ToString();
-        _httpClient = httpClientFactory.CreateClient(serviceName);
-        _options = options.Value.Services.First(s => s.Name == serviceName);
+        var clientName = Client.ToString();
+        _httpClient = httpClientFactory.CreateClient(clientName);
+        _options = options.Value.First(s => s.Name == clientName);
     }
 
     public Task<string> CreateIssueAsync(CreateIssueRequest request, CancellationToken cancellationToken)

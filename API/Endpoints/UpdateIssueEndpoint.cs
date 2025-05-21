@@ -6,7 +6,7 @@ using Shared.Contracts.Responses.Issues;
 
 namespace API.Endpoints;
 
-[HttpPut("issues/update"), AllowAnonymous]
+[HttpPut("issues/{Id}/update"), AllowAnonymous]
 public sealed class UpdateIssueEndpoint(IGitClientFactory gitClientFactory) : Endpoint<UpdateIssueRequest, CreateOrUpdateIssueResponse>
 {
     public override async Task HandleAsync(UpdateIssueRequest request, CancellationToken cancellationToken)

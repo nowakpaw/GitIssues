@@ -5,7 +5,7 @@ using Shared.Contracts.Requests.Issues;
 
 namespace API.Endpoints;
 
-[HttpPut("issues/close"), AllowAnonymous]
+[HttpPut("issues/{Id}/close"), AllowAnonymous]
 public sealed class CloseIssueEndpoint(IGitClientFactory gitClientFactory) : Endpoint<CloseIssueRequest>
 {
     public override async Task HandleAsync(CloseIssueRequest request, CancellationToken cancellationToken)
